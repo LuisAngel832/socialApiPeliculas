@@ -16,7 +16,8 @@ public class JwtUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    private final String jwtSecret = "mySecretKeySuperLarga12345678901234567890"; // Mínimo 32 caracteres
+    private final String jwtSecret = "4k3WmN8nBzE7rLc5Hy2xQs0vTgHjIpMnUvWxYzAbCdEfGhIjKlMnOpQrStUvWxYz";
+
     private final int jwtExpirationMs = 86400000; // 24 horas
 
     private Key getSigningKey() {

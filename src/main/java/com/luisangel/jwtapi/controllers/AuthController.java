@@ -38,7 +38,7 @@ public class AuthController {
 
     @Autowired
     UserRepository userRepository;
-    
+
     @Autowired
     RoleRepository roleRepository;
 
@@ -50,25 +50,28 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        System.out.println("📩 Intentando login de: " + loginRequest.getUsername());
 
         Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
-        );
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+
+        System.out.println("✅ Autenticación correcta: " + authentication.getName());
+
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken((UserDetailsImpl) authentication.getPrincipal());
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities()
-            .stream()
-            .map(item -> item.getAuthority())
-            .collect(Collectors.toList());
+                .stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(new JwtResponse(jwt,
-                                                 userDetails.getId(),
-                                                 userDetails.getUsername(),
-                                                 userDetails.getEmail(),
-                                                 roles));
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getEmail(),
+                roles));
     }
 
     @PostMapping("/signup")
@@ -83,8 +86,8 @@ public class AuthController {
 
         // Crear nuevo usuario
         User user = new User(signUpRequest.getUsername(),
-                             signUpRequest.getEmail(),
-                             encoder.encode(signUpRequest.getPassword()));
+                signUpRequest.getEmail(),
+                encoder.encode(signUpRequest.getPassword()));
 
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
