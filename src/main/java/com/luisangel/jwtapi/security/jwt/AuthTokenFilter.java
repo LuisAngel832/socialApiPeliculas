@@ -31,24 +31,35 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                                     throws ServletException, IOException {
         try {
             String jwt = parseJwt(request);
-            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                String username = jwtUtils.getUserNameFromJwtToken(jwt);
+            System.out.println("🔐 Token recibido en filtro: " + jwt);
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (jwt != null) {
+                boolean isValid = jwtUtils.validateJwtToken(jwt);
+                System.out.println("✅ ¿Token válido?: " + isValid);
 
-                UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities());
+                if (isValid) {
+                    String username = jwtUtils.getUserNameFromJwtToken(jwt);
+                    System.out.println("👤 Usuario extraído del token: " + username);
 
-                authentication.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request));
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities());
+
+                    authentication.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } else {
+                System.out.println("⚠️ No se recibió ningún token.");
             }
+
         } catch (Exception e) {
-            System.err.println("No se pudo establecer autenticación: " + e.getMessage());
+            System.err.println("❌ No se pudo establecer autenticación: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);
