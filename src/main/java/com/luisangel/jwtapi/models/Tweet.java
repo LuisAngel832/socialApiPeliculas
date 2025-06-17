@@ -1,31 +1,24 @@
 package com.luisangel.jwtapi.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tweets")
 public class Tweet {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Size(max = 140)
     private String tweet;
+    @Column(name = "imagen_url", columnDefinition = "TEXT")
+    private String imagenUrl;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    private LocalDateTime fechaCreacion;
+
+    @ManyToOne
     @JoinColumn(name = "posted_by", referencedColumnName = "id")
     private User postedBy;
-
-    public Tweet() {
-    }
-
-    public Tweet(String tweet) {
-        this.tweet = tweet;
-    }
 
     public Long getId() {
         return id;
@@ -39,6 +32,22 @@ public class Tweet {
         this.tweet = tweet;
     }
 
+    public String getImagenUrl() {
+        return imagenUrl;
+    }
+
+    public void setImagenUrl(String imagenUrl) {
+        this.imagenUrl = imagenUrl;
+    }
+
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
     public User getPostedBy() {
         return postedBy;
     }
@@ -46,5 +55,4 @@ public class Tweet {
     public void setPostedBy(User postedBy) {
         this.postedBy = postedBy;
     }
-
 }
