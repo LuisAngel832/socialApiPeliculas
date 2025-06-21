@@ -26,20 +26,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-                .cors() // ✅ ACTIVA CORS y permite usar CorsConfig
+                .cors()
                 .and()
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/tweets/publicos").permitAll() 
+                        .requestMatchers("/api/tweets/publicos").permitAll()
                         .requestMatchers("/api/tweets/crear").authenticated()
-                        // ✅ Asegúrate de incluir explícitamente los sub-rutas
                         .requestMatchers("/api/reacciones/tweet/**").permitAll()
                         .requestMatchers("/api/reacciones/**").permitAll()
                         .requestMatchers("/api/comentarios/tweet/**").permitAll()
                         .anyRequest().authenticated())
-                .addFilterBefore(jwtAuthTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthTokenFilter, UsernamePasswordAuthenticationFilter.class) // Asegúrate de que el
+                                                                                                 // filtro está añadido
                 .build();
     }
 
