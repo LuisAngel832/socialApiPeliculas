@@ -8,7 +8,7 @@ WORKDIR /app
 COPY target/jwtapi-0.0.1-SNAPSHOT.jar app.jar
 
 # Exponer el puerto (opcional para documentación)
-EXPOSE 8081
+EXPOSE 8080
 
 # Ejecutar el JAR
 ENTRYPOINT ["java", "-jar", "app.jar"]
