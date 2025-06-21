@@ -1,14 +1,15 @@
-# Imagen base ligera con Java 21
-FROM openjdk:21-jdk-slim
-
-# Crear un directorio de trabajo
+# Etapa 1: Build con Maven
+FROM maven:3.9.5-eclipse-temurin-17 AS builder
 WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Copiar el JAR compilado desde target
-COPY target/jwtapi-0.0.1-SNAPSHOT.jar app.jar
+# Etapa 2: Imagen ligera para ejecutar
+FROM eclipse-temurin:21-jdk
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
 
-# Exponer el puerto (opcional para documentación)
+# Exponer el puerto que usa Spring Boot
 EXPOSE 8080
 
-# Ejecutar el JAR
 ENTRYPOINT ["java", "-jar", "app.jar"]
